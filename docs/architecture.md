@@ -5,6 +5,7 @@ TalentForge is an enterprise AI-powered hiring platform designed to modernize ca
 
 - **Phase 1: Project Foundation**: Established a modular, decoupled, and production-oriented skeleton focusing on system reliability, type safety, environment configuration, and automated health telemetry.
 - **Phase 2: Database & Storage**: Establishes the relational schema, Supabase PostgreSQL connection, pgvector embedding foundation, and Supabase Storage resume management pipeline.
+- **Phase 3: Authentication & RBAC**: Integrates Supabase Auth with JWT access token verification, PostgreSQL user profile linkage, server-enforced role permissions (ADMIN, RECRUITER, CANDIDATE), candidate resource ownership checks, and role-aware frontend portals.
 
 ---
 
