@@ -11,7 +11,7 @@ export const Header: React.FC = () => {
           <Cpu size={22} color="#ffffff" />
         </div>
         <span className="logo-text">TalentForge</span>
-        <span className="badge-phase">Phase 1: Foundation</span>
+        <span className="badge-phase">Phase 2: Database &amp; Storage</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

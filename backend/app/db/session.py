@@ -44,6 +44,6 @@ def check_db_connection() -> tuple[bool, str | None]:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
         return True, None
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.warning(f"Database health check failed: {exc}")
         return False, str(exc)

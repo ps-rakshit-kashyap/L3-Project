@@ -26,7 +26,14 @@ class Settings(BaseSettings):
             return [str(i) for i in v]
         return []
 
-    # Future integration placeholders (Phase 1 placeholders)
+    # Supabase Configuration
+    SUPABASE_URL: str | None = None
+    SUPABASE_ANON_KEY: str | None = None
+    SUPABASE_SERVICE_ROLE_KEY: str | None = None
+    SUPABASE_STORAGE_BUCKET: str = "resumes"
+    MAX_UPLOAD_SIZE_MB: int = 10
+
+    # Future integration placeholders
     LLM_API_KEY: str | None = None
     LANGFUSE_PUBLIC_KEY: str | None = None
     LANGFUSE_SECRET_KEY: str | None = None

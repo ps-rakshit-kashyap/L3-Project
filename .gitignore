@@ -32,6 +32,8 @@ pnpm-debug.log*
 
 # Database & Volume Mounts
 postgres_data/
+storage_resumes/
+backend/storage_resumes/
 
 # OS & Editor
 .DS_Store
