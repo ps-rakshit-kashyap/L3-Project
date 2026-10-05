@@ -42,3 +42,6 @@ ignore = ["B008", "BLE001", "S110"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 asyncio_mode = "auto"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]

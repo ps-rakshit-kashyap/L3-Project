@@ -15,10 +15,11 @@ class StorageService:
         self.bucket = settings.SUPABASE_STORAGE_BUCKET
         self.client: Client | None = None
 
-        if settings.SUPABASE_URL and settings.SUPABASE_SERVICE_ROLE_KEY:
+        secret_key = settings.effective_supabase_key
+        if settings.SUPABASE_URL and secret_key:
             try:
                 self.client = create_client(
-                    settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE_KEY
+                    settings.SUPABASE_URL, secret_key
                 )
                 logger.info(f"Supabase Storage initialized for bucket '{self.bucket}'")
             except Exception as e:
@@ -56,9 +57,9 @@ class StorageService:
         # 1. Supabase Storage upload
         if self.client:
             try:
-                # Ensure bucket exists
+                # Ensure bucket exists and is kept private
                 try:
-                    self.client.storage.create_bucket(self.bucket, options={"public": True})
+                    self.client.storage.create_bucket(self.bucket, options={"public": False})
                 except Exception:
                     # Bucket likely already exists
                     pass
@@ -69,7 +70,19 @@ class StorageService:
                     file_options={"content-type": content_type, "upsert": "true"},
                 )
 
-                file_url = self.client.storage.from_(self.bucket).get_public_url(file_path)
+                # Generate signed URL (valid for 7 days) since bucket is private
+                try:
+                    signed_res = self.client.storage.from_(self.bucket).create_signed_url(
+                        file_path, 60 * 60 * 24 * 7
+                    )
+                    file_url = (
+                        signed_res.get("signedURL")
+                        or signed_res.get("signedUrl")
+                        or self.client.storage.from_(self.bucket).get_public_url(file_path)
+                    )
+                except Exception:
+                    file_url = self.client.storage.from_(self.bucket).get_public_url(file_path)
+
                 return {
                     "file_name": original_name,
                     "file_path": file_path,

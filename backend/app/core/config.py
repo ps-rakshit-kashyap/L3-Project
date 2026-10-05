@@ -28,10 +28,17 @@ class Settings(BaseSettings):
 
     # Supabase Configuration
     SUPABASE_URL: str | None = None
+    SUPABASE_PUBLISHABLE_KEY: str | None = None
+    SUPABASE_SECRET_KEY: str | None = None
     SUPABASE_ANON_KEY: str | None = None
     SUPABASE_SERVICE_ROLE_KEY: str | None = None
     SUPABASE_STORAGE_BUCKET: str = "resumes"
     MAX_UPLOAD_SIZE_MB: int = 10
+
+    @property
+    def effective_supabase_key(self) -> str | None:
+        """Returns the secret / service role key for backend administration."""
+        return self.SUPABASE_SECRET_KEY or self.SUPABASE_SERVICE_ROLE_KEY
 
     # Future integration placeholders
     LLM_API_KEY: str | None = None
