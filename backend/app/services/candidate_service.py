@@ -29,7 +29,20 @@ class CandidateService:
         return db.execute(statement).scalar_one_or_none()
 
     @staticmethod
-    def create(db: Session, candidate_in: CandidateCreate) -> Candidate:
+    def get_by_user_or_email(db: Session, user_id: uuid.UUID | None, email: str | None) -> Candidate | None:
+        statement = select(Candidate).options(selectinload(Candidate.resumes))
+        if user_id and email:
+            statement = statement.where((Candidate.user_id == user_id) | (Candidate.email == email))
+        elif user_id:
+            statement = statement.where(Candidate.user_id == user_id)
+        elif email:
+            statement = statement.where(Candidate.email == email)
+        else:
+            return None
+        return db.execute(statement).scalar_one_or_none()
+
+    @staticmethod
+    def create(db: Session, candidate_in: CandidateCreate, user_id: uuid.UUID | None = None) -> Candidate:
         # Check email uniqueness
         existing = db.execute(
             select(Candidate).where(Candidate.email == candidate_in.email)
@@ -38,6 +51,7 @@ class CandidateService:
             raise ValueError(f"Candidate with email '{candidate_in.email}' already exists.")
 
         candidate = Candidate(
+            user_id=user_id,
             name=candidate_in.name,
             email=candidate_in.email,
             phone=candidate_in.phone,

@@ -88,7 +88,21 @@ async function testPhase2Contracts() {
   assert.strictEqual(mockApplication.candidate_id, mockCandidate.id);
   console.log('✓ Application contract validation passed.');
 
-  // 6. Live Backend Connectivity Check (if server running)
+  // 6. Phase 3 Auth UserProfile & Role Contract
+  const mockUserProfile = {
+    id: '66666666-6666-6666-6666-666666666666',
+    auth_user_id: '77777777-7777-7777-7777-777777777777',
+    name: 'Recruiter User',
+    email: 'recruiter@talentforge.ai',
+    role: 'RECRUITER',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+  assert(['ADMIN', 'RECRUITER', 'CANDIDATE'].includes(mockUserProfile.role));
+  assert.strictEqual(mockUserProfile.role, 'RECRUITER');
+  console.log('✓ Phase 3 UserProfile & RBAC role contract validation passed.');
+
+  // 7. Live Backend Connectivity Check (if server running)
   const targetUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   try {
     const res = await fetch(`${targetUrl}/api/v1/health`, { signal: AbortSignal.timeout(1500) });
@@ -100,7 +114,7 @@ async function testPhase2Contracts() {
     console.log(`ℹ Live backend not running currently (${e.message}) - unit contracts verified.`);
   }
 
-  console.log('--- All Phase 2 Frontend Verification Checks Passed Successfully ---');
+  console.log('--- All Phase 3 Frontend Verification Checks Passed Successfully ---');
 }
 
 testPhase2Contracts();

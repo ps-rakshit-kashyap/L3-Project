@@ -4,6 +4,7 @@ from app.schemas.company import CompanyCreate, CompanyResponse
 from app.schemas.health import HealthResponse
 from app.schemas.job import JobCreate, JobResponse
 from app.schemas.resume import ResumeResponse
+from app.schemas.user import UserResponse, UserRoleUpdate, UserSyncRequest
 
 __all__ = [
     "ApplicationCreate",
@@ -16,4 +17,7 @@ __all__ = [
     "JobCreate",
     "JobResponse",
     "ResumeResponse",
+    "UserResponse",
+    "UserRoleUpdate",
+    "UserSyncRequest",
 ]

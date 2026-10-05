@@ -9,15 +9,84 @@ import {
   Application,
   ApplicationCreate,
   Resume,
+  UserProfile,
+  UserRole,
 } from '@/types/models';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export class ApiService {
   private static baseUrl = API_BASE_URL.replace(/\/$/, '');
+  private static authToken: string | null = null;
+
+  static setAuthToken(token: string | null) {
+    this.authToken = token;
+  }
+
+  static getAuthToken(): string | null {
+    return this.authToken;
+  }
+
+  private static getHeaders(extraHeaders: Record<string, string> = {}): Record<string, string> {
+    const headers: Record<string, string> = { ...extraHeaders };
+    if (this.authToken) {
+      headers['Authorization'] = `Bearer ${this.authToken}`;
+    }
+    return headers;
+  }
 
   static getBaseUrl(): string {
     return this.baseUrl;
+  }
+
+  /**
+   * Authentication & Current User
+   */
+  static async getMe(): Promise<UserProfile> {
+    const res = await fetch(`${this.baseUrl}/api/v1/auth/me`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `Failed to fetch user profile (${res.status})`);
+    }
+    return res.json();
+  }
+
+  static async syncUser(name?: string): Promise<UserProfile> {
+    const res = await fetch(`${this.baseUrl}/api/v1/auth/sync`, {
+      method: 'POST',
+      headers: this.getHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ name }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `Failed to sync user profile (${res.status})`);
+    }
+    return res.json();
+  }
+
+  static async getUsers(): Promise<UserProfile[]> {
+    const res = await fetch(`${this.baseUrl}/api/v1/auth/users`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error(`Failed to list users (${res.status})`);
+    return res.json();
+  }
+
+  static async updateUserRole(userId: string, role: UserRole): Promise<UserProfile> {
+    const res = await fetch(`${this.baseUrl}/api/v1/auth/users/${userId}/role`, {
+      method: 'PATCH',
+      headers: this.getHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ role }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || 'Failed to update user role');
+    }
+    return res.json();
   }
 
   /**
@@ -54,7 +123,10 @@ export class ApiService {
    * Companies
    */
   static async getCompanies(): Promise<Company[]> {
-    const res = await fetch(`${this.baseUrl}/api/v1/companies`, { cache: 'no-store' });
+    const res = await fetch(`${this.baseUrl}/api/v1/companies`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
     if (!res.ok) throw new Error(`Failed to fetch companies (${res.status})`);
     return res.json();
   }
@@ -62,7 +134,7 @@ export class ApiService {
   static async createCompany(data: CompanyCreate): Promise<Company> {
     const res = await fetch(`${this.baseUrl}/api/v1/companies`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -77,7 +149,10 @@ export class ApiService {
    */
   static async getJobs(companyId?: string): Promise<Job[]> {
     const query = companyId ? `?company_id=${companyId}` : '';
-    const res = await fetch(`${this.baseUrl}/api/v1/jobs${query}`, { cache: 'no-store' });
+    const res = await fetch(`${this.baseUrl}/api/v1/jobs${query}`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
     if (!res.ok) throw new Error(`Failed to fetch jobs (${res.status})`);
     return res.json();
   }
@@ -85,7 +160,7 @@ export class ApiService {
   static async createJob(data: JobCreate): Promise<Job> {
     const res = await fetch(`${this.baseUrl}/api/v1/jobs`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -99,15 +174,33 @@ export class ApiService {
    * Candidates
    */
   static async getCandidates(): Promise<Candidate[]> {
-    const res = await fetch(`${this.baseUrl}/api/v1/candidates`, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Failed to fetch candidates (${res.status})`);
+    const res = await fetch(`${this.baseUrl}/api/v1/candidates`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `Failed to fetch candidates (${res.status})`);
+    }
+    return res.json();
+  }
+
+  static async getMyCandidateProfile(): Promise<Candidate> {
+    const res = await fetch(`${this.baseUrl}/api/v1/candidates/me`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `Failed to fetch candidate profile (${res.status})`);
+    }
     return res.json();
   }
 
   static async createCandidate(data: CandidateCreate): Promise<Candidate> {
     const res = await fetch(`${this.baseUrl}/api/v1/candidates`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -126,6 +219,7 @@ export class ApiService {
 
     const res = await fetch(`${this.baseUrl}/api/v1/candidates/${candidateId}/resume`, {
       method: 'POST',
+      headers: this.getHeaders(),
       body: formData,
     });
     if (!res.ok) {
@@ -144,7 +238,10 @@ export class ApiService {
     if (candidateId) params.append('candidate_id', candidateId);
     const query = params.toString() ? `?${params.toString()}` : '';
 
-    const res = await fetch(`${this.baseUrl}/api/v1/applications${query}`, { cache: 'no-store' });
+    const res = await fetch(`${this.baseUrl}/api/v1/applications${query}`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
     if (!res.ok) throw new Error(`Failed to fetch applications (${res.status})`);
     return res.json();
   }
@@ -152,7 +249,7 @@ export class ApiService {
   static async createApplication(data: ApplicationCreate): Promise<Application> {
     const res = await fetch(`${this.baseUrl}/api/v1/applications`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: this.getHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(data),
     });
     if (!res.ok) {

@@ -78,3 +78,16 @@ export interface ApplicationCreate {
   candidate_id: string;
   status?: string;
 }
+
+export type UserRole = 'ADMIN' | 'RECRUITER' | 'CANDIDATE';
+
+export interface UserProfile {
+  id: string;
+  auth_user_id: string | null;
+  name: string;
+  email: string;
+  role: UserRole;
+  created_at: string;
+  updated_at: string;
+}
+

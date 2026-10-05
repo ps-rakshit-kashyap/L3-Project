@@ -5,7 +5,7 @@ from app.models.evaluation import FinalEvaluation, InterviewResult, ScreeningRes
 from app.models.job import Job
 from app.models.rag import DocumentChunk, KnowledgeDocument
 from app.models.resume import Resume
-from app.models.user import User
+from app.models.user import User, UserRole
 
 __all__ = [
     "Application",
@@ -19,4 +19,5 @@ __all__ = [
     "Resume",
     "ScreeningResult",
     "User",
+    "UserRole",
 ]

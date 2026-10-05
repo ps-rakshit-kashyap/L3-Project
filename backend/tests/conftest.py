@@ -46,7 +46,23 @@ def db_session() -> Generator[Session, None, None]:
 
 @pytest.fixture
 def client(db_session: Session) -> Generator[TestClient, None, None]:
-    """Overrides get_db dependency to point to the in-memory test database."""
+    """Provides a TestClient with default Admin authentication (for Phase 2 regression test compatibility)."""
+
+    def override_get_db() -> Generator[Session, None, None]:
+        try:
+            yield db_session
+        finally:
+            pass
+
+    fastapi_app.dependency_overrides[get_db] = override_get_db
+    with TestClient(fastapi_app, headers={"Authorization": "Bearer test-token-admin"}) as test_client:
+        yield test_client
+    fastapi_app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def unauthenticated_client(db_session: Session) -> Generator[TestClient, None, None]:
+    """Provides an unauthenticated TestClient (no Authorization header)."""
 
     def override_get_db() -> Generator[Session, None, None]:
         try:
@@ -58,3 +74,52 @@ def client(db_session: Session) -> Generator[TestClient, None, None]:
     with TestClient(fastapi_app) as test_client:
         yield test_client
     fastapi_app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def admin_client(db_session: Session) -> Generator[TestClient, None, None]:
+    """Provides a TestClient authenticated as ADMIN."""
+
+    def override_get_db() -> Generator[Session, None, None]:
+        try:
+            yield db_session
+        finally:
+            pass
+
+    fastapi_app.dependency_overrides[get_db] = override_get_db
+    with TestClient(fastapi_app, headers={"Authorization": "Bearer test-token-admin"}) as test_client:
+        yield test_client
+    fastapi_app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def recruiter_client(db_session: Session) -> Generator[TestClient, None, None]:
+    """Provides a TestClient authenticated as RECRUITER."""
+
+    def override_get_db() -> Generator[Session, None, None]:
+        try:
+            yield db_session
+        finally:
+            pass
+
+    fastapi_app.dependency_overrides[get_db] = override_get_db
+    with TestClient(fastapi_app, headers={"Authorization": "Bearer test-token-recruiter"}) as test_client:
+        yield test_client
+    fastapi_app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def candidate_client(db_session: Session) -> Generator[TestClient, None, None]:
+    """Provides a TestClient authenticated as CANDIDATE."""
+
+    def override_get_db() -> Generator[Session, None, None]:
+        try:
+            yield db_session
+        finally:
+            pass
+
+    fastapi_app.dependency_overrides[get_db] = override_get_db
+    with TestClient(fastapi_app, headers={"Authorization": "Bearer test-token-candidate"}) as test_client:
+        yield test_client
+    fastapi_app.dependency_overrides.clear()
+

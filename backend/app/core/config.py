@@ -40,6 +40,9 @@ class Settings(BaseSettings):
         """Returns the secret / service role key for backend administration."""
         return self.SUPABASE_SECRET_KEY or self.SUPABASE_SERVICE_ROLE_KEY
 
+    # Initial Bootstrap Admin
+    INITIAL_ADMIN_EMAIL: str | None = None
+
     # Future integration placeholders
     LLM_API_KEY: str | None = None
     LANGFUSE_PUBLIC_KEY: str | None = None
