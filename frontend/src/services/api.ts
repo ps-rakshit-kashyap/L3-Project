@@ -67,6 +67,19 @@ export class ApiService {
     return res.json();
   }
 
+  static async signupUser(name: string, email: string, password: string): Promise<UserProfile> {
+    const res = await fetch(`${this.baseUrl}/api/v1/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `Registration failed (${res.status})`);
+    }
+    return res.json();
+  }
+
   static async getUsers(): Promise<UserProfile[]> {
     const res = await fetch(`${this.baseUrl}/api/v1/auth/users`, {
       headers: this.getHeaders(),

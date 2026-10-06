@@ -120,25 +120,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (email: string, password: string, name: string): Promise<void> => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          data: { name: name.trim() },
-        },
-      });
-
-      if (error) {
-        throw new Error(error.message);
+      // 1. Register candidate via backend (uses Supabase Admin API with auto-confirmed email to avoid SMTP limits/RFC domain blocks)
+      try {
+        await ApiService.signupUser(name, email, password);
+      } catch (backendErr: unknown) {
+        console.warn('Backend signup exception, attempting direct Supabase signUp fallback:', backendErr);
+        const { error: sbError } = await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+          options: {
+            data: { name: name.trim() },
+          },
+        });
+        if (sbError) {
+          const msg = backendErr instanceof Error ? backendErr.message : sbError.message;
+          throw new Error(msg);
+        }
       }
 
-      // If Supabase has email confirmation disabled (or returned session), sync immediately
-      if (data.session) {
-        setSession(data.session);
-        setUser(data.user);
-        const p = await syncBackendProfile(data.session.access_token, name);
-        setProfile(p);
-      }
+      // 2. Immediately sign in to establish active session and access token
+      await login(email, password);
     } finally {
       setLoading(false);
     }

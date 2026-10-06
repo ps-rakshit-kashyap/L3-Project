@@ -24,3 +24,10 @@ class UserSyncRequest(BaseModel):
 
 class UserRoleUpdate(BaseModel):
     role: UserRole
+
+
+class UserSignupRequest(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+
