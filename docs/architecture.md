@@ -12,44 +12,48 @@ TalentForge is an enterprise AI-powered hiring platform designed to modernize ca
 ## 2. System Architecture
 
 ```mermaid
-graph TD
-    User([User Browser])
+flowchart TD
+    User(["User Browser"])
     
-    subgraph Frontend ["Next.js (App Router + TypeScript)"]
-        UI[Landing Page & Verification Tabs]
-        ApiClient[API Client / Services Layer]
+    subgraph Frontend["Next.js App Router (TypeScript)"]
+        UI["Landing Page, Auth & Role Tabs"]
+        ApiClient["API Client / Services Layer"]
         UI --> ApiClient
     end
     
-    subgraph Backend ["FastAPI Gateway (Python 3.12+)"]
-        MainApp[FastAPI Application]
-        Router[API v1 Router]
-        Services[Business Services Layer]
-        StorageSvc[Storage Service]
-        CORS[CORS & Error Handlers]
-        Config[Pydantic Settings]
+    subgraph Backend["FastAPI Gateway (Python 3.12+)"]
+        MainApp["FastAPI Application"]
+        AuthModule["Auth & RBAC Dependencies"]
+        Router["API v1 Router"]
+        Services["Business Services Layer"]
+        StorageSvc["Storage Service"]
+        CORS["CORS & Error Handlers"]
+        Config["Pydantic Settings"]
         
         MainApp --> CORS
         MainApp --> Config
-        MainApp --> Router
+        MainApp --> AuthModule
+        AuthModule --> Router
         Router --> Services
         Router --> StorageSvc
     end
     
-    subgraph Persistence ["Data & Storage Layer"]
-        SessionMgr[SQLAlchemy 2.x Session Engine]
-        Alembic[Alembic Migrations]
-        Postgres[(Supabase PostgreSQL + pgvector)]
-        SupabaseStorage[(Supabase Storage Bucket)]
+    subgraph Persistence["Data & Cloud Storage Layer"]
+        SessionMgr["SQLAlchemy 2.x Engine"]
+        Alembic["Alembic Migrations"]
+        Postgres[("Supabase PostgreSQL + pgvector")]
+        SupabaseStorage[("Supabase Storage Bucket")]
+        SupabaseAuth[("Supabase Auth Service")]
         
         Services --> SessionMgr
         SessionMgr --> Postgres
         Alembic --> Postgres
         StorageSvc --> SupabaseStorage
+        AuthModule --> SupabaseAuth
     end
 
-    User -->|HTTP :3000| UI
-    ApiClient -->|REST API :8000| MainApp
+    User -->|"HTTP (Port 3000)"| UI
+    ApiClient -->|"REST API (Port 8000)"| MainApp
 ```
 
 ---
