@@ -1,0 +1,11 @@
+{
+  "name": "talentforge-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -C frontend dev",
+    "build": "pnpm -C frontend build",
+    "lint": "pnpm -C frontend lint",
+    "test": "pnpm -C frontend test"
+  }
+}
