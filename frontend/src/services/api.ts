@@ -11,6 +11,7 @@ import {
   Resume,
   UserProfile,
   UserRole,
+  ScreeningResult,
 } from '@/types/models';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -269,6 +270,48 @@ export class ApiService {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
       throw new Error(err.detail || 'Failed to submit application');
     }
+    return res.json();
+  }
+
+  /**
+   * AI Screening (Phase 4)
+   */
+  static async triggerScreening(
+    applicationId: string,
+    forceRescreen: boolean = false,
+    customNotes?: string
+  ): Promise<ScreeningResult> {
+    const res = await fetch(`${this.baseUrl}/api/v1/screenings/applications/${applicationId}`, {
+      method: 'POST',
+      headers: this.getHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ force_rescreen: forceRescreen, custom_notes: customNotes }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `Screening evaluation failed (${res.status})`);
+    }
+    return res.json();
+  }
+
+  static async getScreeningForApplication(applicationId: string): Promise<ScreeningResult> {
+    const res = await fetch(`${this.baseUrl}/api/v1/screenings/applications/${applicationId}`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `Failed to fetch screening (${res.status})`);
+    }
+    return res.json();
+  }
+
+  static async getScreenings(jobId?: string): Promise<ScreeningResult[]> {
+    const query = jobId ? `?job_id=${jobId}` : '';
+    const res = await fetch(`${this.baseUrl}/api/v1/screenings${query}`, {
+      headers: this.getHeaders(),
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error(`Failed to list screenings (${res.status})`);
     return res.json();
   }
 }

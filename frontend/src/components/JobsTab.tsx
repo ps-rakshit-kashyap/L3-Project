@@ -12,6 +12,9 @@ export const JobsTab: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [requirements, setRequirements] = useState('');
+  const [requiredSkills, setRequiredSkills] = useState('');
+  const [preferredSkills, setPreferredSkills] = useState('');
+  const [requiredExperience, setRequiredExperience] = useState('');
   const [location, setLocation] = useState('Remote');
   const [employmentType, setEmploymentType] = useState('Full-time');
   const [loading, setLoading] = useState(false);
@@ -53,6 +56,9 @@ export const JobsTab: React.FC = () => {
         title: title.trim(),
         description: description.trim(),
         requirements: requirements.trim() || undefined,
+        required_skills: requiredSkills.trim() || undefined,
+        preferred_skills: preferredSkills.trim() || undefined,
+        required_experience: requiredExperience.trim() || undefined,
         location: location.trim() || undefined,
         employment_type: employmentType,
         status: 'open',
@@ -60,6 +66,9 @@ export const JobsTab: React.FC = () => {
       setTitle('');
       setDescription('');
       setRequirements('');
+      setRequiredSkills('');
+      setPreferredSkills('');
+      setRequiredExperience('');
       await fetchData();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to create job');
@@ -160,10 +169,45 @@ export const JobsTab: React.FC = () => {
             <input
               id="job-reqs"
               className="form-input"
-              placeholder="e.g. Python, PyTorch, LangChain, 5+ yrs experience"
+              placeholder="e.g. Core educational background, certifications, general requirements"
               value={requirements}
               onChange={(e) => setRequirements(e.target.value)}
             />
+          </div>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label className="form-label" htmlFor="job-req-skills">Required Skills (AI Match Target)</label>
+              <input
+                id="job-req-skills"
+                className="form-input"
+                placeholder="e.g. Python, FastAPI, Docker, PostgreSQL"
+                value={requiredSkills}
+                onChange={(e) => setRequiredSkills(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="job-pref-skills">Preferred Skills (Bonus)</label>
+              <input
+                id="job-pref-skills"
+                className="form-input"
+                placeholder="e.g. AWS, Kubernetes, Redis, GraphQL"
+                value={preferredSkills}
+                onChange={(e) => setPreferredSkills(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="job-req-exp">Required Experience</label>
+              <input
+                id="job-req-exp"
+                className="form-input"
+                placeholder="e.g. 3+ years in backend engineering"
+                value={requiredExperience}
+                onChange={(e) => setRequiredExperience(e.target.value)}
+              />
+            </div>
           </div>
 
           <button

@@ -10,6 +10,7 @@ import { CandidatesTab } from '@/components/CandidatesTab';
 import { ApplicationsTab } from '@/components/ApplicationsTab';
 import { CandidatePortalTab } from '@/components/CandidatePortalTab';
 import { AdminUsersTab } from '@/components/AdminUsersTab';
+import { ScreeningDashboardTab } from '@/components/ScreeningDashboardTab';
 import { useAuth } from '@/context/AuthContext';
 import {
   Activity,
@@ -22,6 +23,7 @@ import {
   UserCog,
   LogIn,
   Lock,
+  Sparkles,
 } from 'lucide-react';
 
 type TabType =
@@ -31,6 +33,7 @@ type TabType =
   | 'jobs'
   | 'candidates'
   | 'applications'
+  | 'screening'
   | 'admin-users';
 
 export default function HomePage() {
@@ -42,7 +45,7 @@ export default function HomePage() {
     if (role === 'CANDIDATE') {
       setActiveTab('candidate-portal');
     } else if (role === 'ADMIN' || role === 'RECRUITER') {
-      setActiveTab('jobs');
+      setActiveTab('screening');
     }
   }, [role]);
 
@@ -67,17 +70,17 @@ export default function HomePage() {
             color: 'var(--accent-sky)',
           }}
         >
-          <Shield size={14} />
-          <span>Phase 3: Supabase Auth &amp; Role-Based Access Control (RBAC)</span>
+          <Sparkles size={14} color="var(--accent-purple)" />
+          <span>Phase 4: AI Resume Screening Agent &amp; Scorecard</span>
         </div>
 
         <h1 className="hero-title">
-          TalentForge <span className="gradient-text">Auth &amp; RBAC</span>
+          TalentForge <span className="gradient-text">AI Screening</span>
         </h1>
 
         <p className="hero-subtitle">
-          Secure JWT authentication with Supabase Auth, PostgreSQL user identities,
-          and server-enforced role permissions for Admin, Recruiter, and Candidate users.
+          Intelligent candidate resume parsing (PDF, DOCX, TXT), requirements evaluation,
+          and structured AI scorecards empowering recruiters with objective hiring insights.
         </p>
 
         {/* Unauthenticated Alert Banner */}
@@ -183,6 +186,21 @@ export default function HomePage() {
             </button>
           )}
 
+          {canAccessRecruiter && (
+            <button
+              id="tab-screening"
+              className={`nav-tab-item ${activeTab === 'screening' ? 'active' : ''}`}
+              onClick={() => setActiveTab('screening')}
+              style={{
+                background: activeTab === 'screening' ? undefined : 'rgba(99, 102, 241, 0.08)',
+                borderColor: activeTab === 'screening' ? undefined : 'rgba(99, 102, 241, 0.3)',
+              }}
+            >
+              <Sparkles size={16} color="var(--accent-purple)" />
+              <span style={{ fontWeight: 600 }}>AI Screening</span>
+            </button>
+          )}
+
           {/* Health & Telemetry is always available */}
           <button
             id="tab-telemetry"
@@ -235,6 +253,19 @@ export default function HomePage() {
               <h3 style={{ margin: '0 0 0.5rem 0' }}>Access Restricted</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto' }}>
                 Recruiter access required to view cross-candidate application data.
+              </p>
+            </div>
+          )
+        )}
+        {activeTab === 'screening' && (
+          canAccessRecruiter ? (
+            <ScreeningDashboardTab />
+          ) : (
+            <div className="card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
+              <Lock size={32} color="#f87171" style={{ margin: '0 auto 1rem auto' }} />
+              <h3 style={{ margin: '0 0 0.5rem 0' }}>Access Restricted</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto' }}>
+                The AI Screening Dashboard is restricted to Recruiter and Admin roles.
               </p>
             </div>
           )

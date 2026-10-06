@@ -145,7 +145,27 @@ class StorageService:
                 "size": stat.st_size,
                 "created_at": stat.st_ctime,
             }
-        return None
+    def download_file(self, file_path: str) -> bytes:
+        """
+        Retrieves raw file bytes from Supabase Storage or local fallback.
+        Raises FileNotFoundError if the file cannot be retrieved.
+        """
+        # 1. Try Supabase Storage
+        if self.client:
+            try:
+                res = self.client.storage.from_(self.bucket).download(file_path)
+                if res:
+                    return res
+            except Exception as exc:
+                logger.warning(f"Supabase download failed for '{file_path}': {exc}. Trying local fallback.")
+
+        # 2. Try local fallback storage
+        local_target = self.local_dir / file_path
+        if local_target.exists():
+            with open(local_target, "rb") as f:
+                return f.read()
+
+        raise FileNotFoundError(f"File '{file_path}' not found in Supabase Storage or local storage.")
 
 
 storage_service = StorageService()

@@ -8,6 +8,10 @@ class JobBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=255, description="Job title")
     description: str = Field(..., min_length=1, description="Job description")
     requirements: str | None = Field(default=None, description="Job requirements or qualifications")
+    required_skills: str | None = Field(default=None, description="Key required technical and domain skills")
+    preferred_skills: str | None = Field(default=None, description="Nice-to-have or preferred skills")
+    required_experience: str | None = Field(default=None, max_length=255, description="Years and depth of experience required")
+    education_requirements: str | None = Field(default=None, max_length=255, description="Required education or degree level")
     location: str | None = Field(default="Remote", max_length=255, description="Location")
     employment_type: str = Field(
         default="Full-time",

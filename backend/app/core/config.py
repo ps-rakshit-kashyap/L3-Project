@@ -43,8 +43,33 @@ class Settings(BaseSettings):
     # Initial Bootstrap Admin
     INITIAL_ADMIN_EMAIL: str | None = None
 
-    # Future integration placeholders
+    # LLM & Screening Agent Configuration
+    LLM_PROVIDER: str = "groq"  # "groq", "openai", "custom", "mock"
+    LLM_MODEL: str = "llama-3.3-70b-versatile"
     LLM_API_KEY: str | None = None
+    GROQ_API_KEY: str | None = None
+    OPENAI_API_KEY: str | None = None
+    LLM_BASE_URL: str | None = None
+    LLM_TEMPERATURE: float = 0.1
+
+    @property
+    def effective_llm_api_key(self) -> str | None:
+        """Returns the configured LLM API key based on provider preference or general key."""
+        if self.LLM_PROVIDER == "groq" and self.GROQ_API_KEY:
+            return self.GROQ_API_KEY
+        if self.LLM_PROVIDER == "openai" and self.OPENAI_API_KEY:
+            return self.OPENAI_API_KEY
+        return self.LLM_API_KEY or self.GROQ_API_KEY or self.OPENAI_API_KEY
+
+    @property
+    def effective_llm_base_url(self) -> str:
+        """Returns the base URL for OpenAI-compatible chat completion endpoints."""
+        if self.LLM_BASE_URL:
+            return self.LLM_BASE_URL
+        if self.LLM_PROVIDER == "groq":
+            return "https://api.groq.com/openai/v1"
+        return "https://api.openai.com/v1"
+
     LANGFUSE_PUBLIC_KEY: str | None = None
     LANGFUSE_SECRET_KEY: str | None = None
 

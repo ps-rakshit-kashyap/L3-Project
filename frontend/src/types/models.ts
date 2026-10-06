@@ -17,6 +17,10 @@ export interface Job {
   title: string;
   description: string;
   requirements?: string | null;
+  required_skills?: string | null;
+  preferred_skills?: string | null;
+  required_experience?: string | null;
+  education_requirements?: string | null;
   location?: string | null;
   employment_type: string;
   status: string;
@@ -29,6 +33,10 @@ export interface JobCreate {
   title: string;
   description: string;
   requirements?: string;
+  required_skills?: string;
+  preferred_skills?: string;
+  required_experience?: string;
+  education_requirements?: string;
   location?: string;
   employment_type?: string;
   status?: string;
@@ -90,4 +98,39 @@ export interface UserProfile {
   created_at: string;
   updated_at: string;
 }
+
+export type ScreeningRecommendation = 'ADVANCE' | 'HOLD' | 'REJECT';
+
+export interface SkillMatch {
+  skill: string;
+  category: 'required' | 'preferred';
+  matched: boolean;
+  evidence?: string | null;
+}
+
+export interface ScreeningEvaluation {
+  overall_score: number;
+  recommendation: ScreeningRecommendation;
+  passed: boolean;
+  summary: string;
+  strengths: string[];
+  weaknesses: string[];
+  skills_analysis: SkillMatch[];
+  experience_assessment: string;
+  education_assessment: string;
+  recommended_interview_questions: string[];
+}
+
+export interface ScreeningResult {
+  id: string;
+  application_id: string;
+  score: number | null;
+  recommendation: string | null;
+  passed: boolean | null;
+  summary: string | null;
+  details: ScreeningEvaluation | null;
+  created_at: string;
+  updated_at: string;
+}
+
 

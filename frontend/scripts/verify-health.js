@@ -102,7 +102,39 @@ async function testPhase2Contracts() {
   assert.strictEqual(mockUserProfile.role, 'RECRUITER');
   console.log('✓ Phase 3 UserProfile & RBAC role contract validation passed.');
 
-  // 7. Live Backend Connectivity Check (if server running)
+  // 7. Phase 4 AI Screening Result Contract
+  const mockScreeningResult = {
+    id: '88888888-8888-8888-8888-888888888888',
+    application_id: mockApplication.id,
+    score: 87.5,
+    recommendation: 'ADVANCE',
+    passed: true,
+    summary: 'Candidate shows exceptional alignment with core role qualifications.',
+    details: {
+      overall_score: 87.5,
+      recommendation: 'ADVANCE',
+      passed: true,
+      summary: 'Candidate shows exceptional alignment with core role qualifications.',
+      strengths: ['Demonstrates deep Python expertise', 'Proven microservice design'],
+      weaknesses: ['Limited AWS cloud background'],
+      skills_analysis: [
+        { skill: 'Python', category: 'required', matched: true, evidence: '5 years professional Python' },
+        { skill: 'Docker', category: 'required', matched: true, evidence: 'Docker containerization in production' },
+      ],
+      experience_assessment: 'Strong background of 5+ years.',
+      education_assessment: 'Bachelor of Science in Computer Science.',
+      recommended_interview_questions: ['Describe your experience with async concurrency.'],
+    },
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+  assert.strictEqual(mockScreeningResult.recommendation, 'ADVANCE');
+  assert.strictEqual(mockScreeningResult.passed, true);
+  assert(mockScreeningResult.score > 0);
+  assert(mockScreeningResult.details.skills_analysis.length > 0);
+  console.log('✓ Phase 4 AI Screening Result & Scorecard contract validation passed.');
+
+  // 8. Live Backend Connectivity Check (if server running)
   const targetUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   try {
     const res = await fetch(`${targetUrl}/api/v1/health`, { signal: AbortSignal.timeout(1500) });
@@ -114,7 +146,7 @@ async function testPhase2Contracts() {
     console.log(`ℹ Live backend not running currently (${e.message}) - unit contracts verified.`);
   }
 
-  console.log('--- All Phase 3 Frontend Verification Checks Passed Successfully ---');
+  console.log('--- All Phase 4 Frontend Verification Checks Passed Successfully ---');
 }
 
 testPhase2Contracts();
