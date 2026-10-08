@@ -8,6 +8,7 @@ from app.models.resume import Resume
 from app.models.user import User, UserRole
 from app.models.interview import InterviewSession, InterviewQuestion, InterviewAnswer, InterviewEvaluation
 from app.models.orchestration import OrchestrationRun, AgentExecution
+from app.models.evaluation_framework import EvaluationRun, EvaluationResultLog
 
 __all__ = [
     "Application",
@@ -28,4 +29,6 @@ __all__ = [
     "InterviewEvaluation",
     "OrchestrationRun",
     "AgentExecution",
+    "EvaluationRun",
+    "EvaluationResultLog",
 ]

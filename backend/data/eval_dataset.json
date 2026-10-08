@@ -1,0 +1,1 @@
+[{"case_id": "test-tech-1", "task_type": "technical_eval", "input_context": {"question": "Q?", "answer": "A!", "resume_text": "Resume", "job_context": "Job", "rubric": "Rubric"}, "expected_output": {"score_min": 8.0, "score_max": 9.0}}]

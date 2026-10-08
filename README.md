@@ -7,6 +7,7 @@
 **Phase 5: RAG Pipeline & MCP Tooling Foundations**
 **Phase 6: AI-Powered Interview System**
 **Phase 7: Multi-Agent Orchestration & A2A**
+**Phase 8: Evaluation & Quality Framework**
 
 TalentForge is an enterprise AI-powered hiring platform designed to orchestrate intelligent candidate discovery, automated resume evaluations, and structured interviews.
 
