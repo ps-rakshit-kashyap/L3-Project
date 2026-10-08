@@ -19,6 +19,7 @@ from app.schemas.screening import (
 )
 from app.services.resume_extractor import resume_extractor
 from app.services.rag_service import rag_service
+from langfuse import observe
 
 
 class ScreeningAgentService:
@@ -28,6 +29,7 @@ class ScreeningAgentService:
     deterministic heuristic fallback for offline, testing, or rate-limited environments.
     """
 
+    @observe()
     def evaluate(
         self,
         job: Job,
@@ -117,6 +119,7 @@ class ScreeningAgentService:
 
         return system_prompt, user_prompt
 
+    @observe()
     def _call_llm(
         self,
         job: Job,
@@ -316,6 +319,7 @@ class ScreeningAgentService:
             recommended_interview_questions=interview_questions,
         )
 
+    @observe()
     def screen_application(
         self,
         db: Session,

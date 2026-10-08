@@ -2,7 +2,9 @@ from typing import List
 from app.services.llm_client import call_llm_structured
 from app.schemas.interview import InterviewQuestionCreate
 from app.prompts.interview.question_generation import QUESTION_GENERATION_PROMPT
+from langfuse import observe
 
+@observe()
 def generate_questions(candidate_context: str, job_context: str, rubric_context: str) -> List[InterviewQuestionCreate]:
     questions = []
     categories = ["TECHNICAL", "PROBLEM_SOLVING", "COMMUNICATION", "ROLE_FIT"]

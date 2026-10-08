@@ -2,7 +2,9 @@ from typing import List
 from app.services.llm_client import call_llm_structured
 from app.schemas.interview import EvaluatorResult, FinalEvaluationResult
 from app.prompts.interview.final_evaluation import FINAL_EVALUATION_PROMPT
+from langfuse import observe
 
+@observe()
 def evaluate_final(evaluations: List[dict]) -> FinalEvaluationResult:
     user_prompt = f"Evaluations:\n{evaluations}"
     res = call_llm_structured(FINAL_EVALUATION_PROMPT, user_prompt, FinalEvaluationResult)

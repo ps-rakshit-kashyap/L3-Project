@@ -12,6 +12,7 @@ from app.services.interview.evaluators import evaluate_technical, evaluate_probl
 from app.services.interview.final_evaluator import evaluate_final
 from app.services.resume_extractor import resume_extractor
 from app.services.rag_service import rag_service
+from langfuse import observe
 
 class OrchestrationService:
     def _create_run(self, db: Session, interview_id: uuid.UUID, workflow_type: str) -> OrchestrationRun:
@@ -49,6 +50,7 @@ class OrchestrationService:
         db.commit()
         db.refresh(execution)
 
+    @observe()
     def generate_questions_workflow(self, db: Session, interview_id: uuid.UUID) -> OrchestrationRun:
         run = self._create_run(db, interview_id, "GENERATE_QUESTIONS")
         
@@ -98,6 +100,7 @@ class OrchestrationService:
         
         return run
 
+    @observe()
     def evaluate_answer_workflow(self, db: Session, interview_id: uuid.UUID, question_id: uuid.UUID, answer_text: str) -> OrchestrationRun:
         run = self._create_run(db, interview_id, "EVALUATE_ANSWER")
         try:
@@ -160,6 +163,7 @@ class OrchestrationService:
 
         return run
 
+    @observe()
     def complete_interview_workflow(self, db: Session, interview_id: uuid.UUID) -> OrchestrationRun:
         run = self._create_run(db, interview_id, "COMPLETE_INTERVIEW")
         try:

@@ -11,6 +11,7 @@ TalentForge is an enterprise AI-powered hiring platform designed to modernize ca
 - **Phase 6: AI-Powered Interview System**: Implements an interactive multi-agent evaluation pipeline with automated role-specific question generation, structured multi-axis answers evaluation (Technical, Problem Solving, Communication, Role Fit), and a unified final scorecard. Features dedicated candidate and recruiter interface portals.
 - **Phase 7: Multi-Agent Orchestration & A2A**: Orchestrates the Phase 6 agents via an independent `orchestration_service.py` that handles state machine, execution persistence, parallel execution of evaluators, failure recovery, and A2A contracts, accessible via dedicated Swagger endpoints.
 - **Phase 8: Evaluation & Quality Framework**: Establishes a deterministic testing engine to benchmark AI agents against curated datasets, enforcing metric stability (accuracy, schema validation, latency) across CLI and REST interfaces.
+- **Phase 9: Langfuse Integration & Observability**: Implements end-to-end tracing via the `langfuse` python SDK. Decorators (`@observe`) capture nested spans across orchestrators, specialist agents, and core LLM clients, tracking costs, tokens, latency, and prompt versions gracefully without breaking application runtime.
 
 ---
 

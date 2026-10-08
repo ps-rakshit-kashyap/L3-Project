@@ -6,6 +6,7 @@ from app.schemas.evaluation import EvaluationCase
 from app.models.evaluation_framework import EvaluationRun, EvaluationResultLog
 from app.services.interview.evaluators import evaluate_technical, evaluate_problem_solving, evaluate_communication, evaluate_role_fit
 from datetime import UTC, datetime
+from langfuse import observe
 
 class EvaluationEngine:
     def load_dataset(self, file_path: str) -> list[EvaluationCase]:
@@ -46,6 +47,7 @@ class EvaluationEngine:
             
         return passed, metrics
 
+    @observe()
     def run_evaluation(self, db: Session, dataset_path: str, agent_name: str, model_name: str = "mock") -> EvaluationRun:
         cases = self.load_dataset(dataset_path)
         

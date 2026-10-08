@@ -72,6 +72,7 @@ class Settings(BaseSettings):
 
     LANGFUSE_PUBLIC_KEY: str | None = None
     LANGFUSE_SECRET_KEY: str | None = None
+    LANGFUSE_BASE_URL: str = "https://cloud.langfuse.com"
 
     # Embeddings Configuration
     EMBEDDING_API_KEY: str | None = None
