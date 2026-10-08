@@ -1,4 +1,4 @@
-# TalentForge — AI-Powered Hiring Platform
+# TalentForge
 
 **Phase 1: Project Foundation & Infrastructure**  
 **Phase 2: Database & Storage (Supabase, pgvector & SQLAlchemy 2.x)**  
