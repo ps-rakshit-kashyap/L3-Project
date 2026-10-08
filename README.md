@@ -3,10 +3,13 @@
 **Phase 1: Project Foundation & Infrastructure**  
 **Phase 2: Database & Storage (Supabase, pgvector & SQLAlchemy 2.x)**  
 **Phase 3: Authentication & Role-Based Access Control (Supabase Auth & RBAC)**
+**Phase 4: AI Resume Screening Agent & Scorecard**
+**Phase 5: RAG Pipeline & MCP Tooling Foundations**
+**Phase 6: AI-Powered Interview System**
 
 TalentForge is an enterprise AI-powered hiring platform designed to orchestrate intelligent candidate discovery, automated resume evaluations, and structured interviews.
 
-This repository implements **Phase 1 (Foundation)**, **Phase 2 (Database & Storage)**, and **Phase 3 (Authentication & RBAC)**, providing a complete PostgreSQL + pgvector schema, Alembic migration pipeline, Supabase Storage integration, Supabase Auth JWT verification, server-enforced role permissions, and interactive Next.js role-aware interfaces.
+This repository implements **Phase 1-6**, providing a complete PostgreSQL + pgvector schema, Alembic migration pipeline, Supabase Storage integration, Supabase Auth JWT verification, server-enforced role permissions, intelligent candidate screening via LLMs, RAG-enhanced generation using vector embeddings, and a multi-evaluator AI-driven interactive interview system.
 
 ---
 
@@ -238,6 +241,8 @@ Once provisioned, administrators can promote other users to `RECRUITER` or `ADMI
 | `/api/v1/candidates/{id}/resume` | POST | Owner / Recruiter / Admin | Upload resume to Supabase Storage |
 | `/api/v1/applications` | GET | Owner / Recruiter / Admin | List applications (Candidates scoped to own) |
 | `/api/v1/applications` | POST | Owner / Recruiter / Admin | Apply to job |
+| `/api/v1/screenings` | GET/POST | Recruiter / Admin | Evaluate application with LLM |
+| `/api/v1/interviews` | POST/GET | Recruiter / Admin / Candidate | Interactive AI interview endpoints |
 
 ---
 
