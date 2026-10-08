@@ -7,6 +7,8 @@ TalentForge is an enterprise AI-powered hiring platform designed to modernize ca
 - **Phase 2: Database & Storage**: Establishes the relational schema, Supabase PostgreSQL connection, pgvector embedding foundation, and Supabase Storage resume management pipeline.
 - **Phase 3: Authentication & RBAC**: Integrates Supabase Auth with JWT access token verification, PostgreSQL user profile linkage, server-enforced role permissions (ADMIN, RECRUITER, CANDIDATE), candidate resource ownership checks, and role-aware frontend portals.
 - **Phase 4: AI Resume Screening**: Implements automated multi-format resume text extraction (PDF, DOCX, TXT), configurable LLM screening agent with deterministic heuristic fallback, structured Pydantic evaluation scorecards (fit score, recommendation, strengths, gaps, skills matrix, interview questions), and interactive Recruiter Pipeline Dashboard.
+- **Phase 5: RAG Pipeline & MCP Tooling Foundations**: Introduces document chunking and vector embedding with `pgvector` for scalable knowledge retrieval, enabling context-aware evaluations, plus foundational MCP server implementations for managed tooling.
+- **Phase 6: AI-Powered Interview System**: Implements an interactive multi-agent evaluation pipeline with automated role-specific question generation, structured multi-axis answers evaluation (Technical, Problem Solving, Communication, Role Fit), and a unified final scorecard. Features dedicated candidate and recruiter interface portals.
 
 ---
 
@@ -76,6 +78,8 @@ flowchart TD
   - `CandidatePortalTab`: Candidate profile management and application status tracking.
   - `ScreeningDashboardTab`: AI Screening Pipeline, live evaluation triggers, and detailed scorecard review modals.
   - `AdminUsersTab`: Administrative user role assignment and access controls.
+  - `InterviewsTab`: Recruiter dashboard for creating and monitoring candidate interviews.
+  - `CandidateInterviewPage`: Dedicated dynamic route (`/interviews/[id]`) for candidate interactive interview sessions.
 
 ### Backend (`/backend`)
 - **Framework**: FastAPI with asynchronous lifespan lifecycle handlers.
@@ -83,8 +87,10 @@ flowchart TD
 - **Storage Layer**: `app/services/storage.py` uploading and downloading candidate resumes with local resilient fallback for offline/test environments.
 - **Resume Extraction**: `app/services/resume_extractor.py` extracting and validating text from PDF, DOCX, and TXT files with database caching.
 - **AI Screening Agent**: `app/services/screening_service.py` evaluating candidate resume text against job requirements and producing structured Pydantic scorecards.
+- **AI Interview System**: `app/services/interview_service.py` driving the interview state machine, interfacing with distinct evaluation models (`evaluators/`) to measure technical depth, problem-solving, communication, and role-fit asynchronously.
+- **RAG & MCP Integration**: Utilizing `app/services/rag_service.py` to retrieve evaluation rubrics and job contexts dynamically to ground the interview generator and evaluators, avoiding hallucinations.
 - **Database Engine**: SQLAlchemy 2.x declarative base and connection pool (`app/db/session.py`) with pre-ping validation.
-- **pgvector Integration**: 1536-dimensional vector embedding column (`DocumentChunk.embedding`) enabling semantic vector search for subsequent RAG phases.
+- **pgvector Integration**: 1536-dimensional vector embedding column (`DocumentChunk.embedding`) enabling semantic vector search used by the RAG service.
 - **Migrations**: Alembic with environment-driven URL resolution and automatic extension creation.
 - **Test Suite**: Pytest with in-memory SQLite fixtures verifying CRUD operations, foreign key constraints, file validation, RBAC enforcement, and AI screening workflows.
 
