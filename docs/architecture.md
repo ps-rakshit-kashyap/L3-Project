@@ -17,51 +17,34 @@ TalentForge is an enterprise AI-powered hiring platform designed to modernize ca
 
 ## 2. System Architecture
 
-```mermaid
-flowchart TD
-    User(["User Browser"])
-
-    subgraph Frontend["Next.js App Router - TypeScript"]
-        UI["Landing Page, Auth and Role Tabs"]
-        ApiClient["API Client / Services Layer"]
-        UI --> ApiClient
-    end
-
-    subgraph Backend["FastAPI Gateway - Python 3.12+"]
-        MainApp["FastAPI Application"]
-        AuthModule["Auth and RBAC"]
-        Router["API v1 Router"]
-        Services["Business Services"]
-        StorageSvc["Storage Service"]
-        CORS["CORS and Error Handlers"]
-        Config["Pydantic Settings"]
-
-        MainApp --> CORS
-        MainApp --> Config
-        MainApp --> AuthModule
-        MainApp --> Router
-
-        Router --> AuthModule
-        Router --> Services
-        Router --> StorageSvc
-    end
-
-    subgraph Persistence["Data and Cloud Storage"]
-        SessionMgr["SQLAlchemy 2.x"]
-        Alembic["Alembic Migrations"]
-        Postgres[("Supabase PostgreSQL and pgvector")]
-        SupabaseStorage[("Supabase Storage")]
-        SupabaseAuth[("Supabase Auth")]
-
-        Services --> SessionMgr
-        SessionMgr --> Postgres
-        Alembic --> Postgres
-        StorageSvc --> SupabaseStorage
-        AuthModule --> SupabaseAuth
-    end
-
-    User -->|"HTTP :3000"| UI
-    ApiClient -->|"REST API :8000"| MainApp
+```text
+[ User Browser ]
+       │ (HTTP :3000)
+       ▼
+┌───────────────────────────────────────────┐
+│ FRONTEND (Next.js App Router - TypeScript)│
+│  ├─ UI (Landing, Auth, Role Tabs)         │
+│  └─ API Client / Services Layer           │
+└──────────────────────┬────────────────────┘
+                       │ (REST API :8000)
+                       ▼
+┌───────────────────────────────────────────┐
+│ BACKEND (FastAPI Gateway - Python 3.12+)  │
+│  ├─ FastAPI Application                   │
+│  ├─ Auth & RBAC Module                    │
+│  ├─ API v1 Router                         │
+│  ├─ Business Services                     │
+│  └─ Storage Service                       │
+└──────────────────────┬────────────────────┘
+                       │
+                       ▼
+┌───────────────────────────────────────────┐
+│ PERSISTENCE (Data & Cloud Storage)        │
+│  ├─ SQLAlchemy 2.x / Alembic Migrations   │
+│  ├─ Supabase PostgreSQL & pgvector        │
+│  ├─ Supabase Storage (Resumes/Docs)       │
+│  └─ Supabase Auth (JWTs/Users)            │
+└───────────────────────────────────────────┘
 ```
 
 ---
