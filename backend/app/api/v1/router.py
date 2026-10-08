@@ -10,6 +10,7 @@ from app.api.v1.screenings import router as screenings_router
 from app.api.v1.knowledge import router as knowledge_router
 from app.api.v1.interviews import router as interviews_router
 from app.api.v1.agents import router as agents_router
+from app.api.v1.orchestration import router as orchestration_router
 
 api_router = APIRouter()
 
@@ -24,3 +25,4 @@ api_router.include_router(screenings_router)
 api_router.include_router(knowledge_router)
 api_router.include_router(interviews_router)
 api_router.include_router(agents_router)
+api_router.include_router(orchestration_router)

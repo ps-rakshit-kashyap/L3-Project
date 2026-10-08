@@ -9,6 +9,7 @@ TalentForge is an enterprise AI-powered hiring platform designed to modernize ca
 - **Phase 4: AI Resume Screening**: Implements automated multi-format resume text extraction (PDF, DOCX, TXT), configurable LLM screening agent with deterministic heuristic fallback, structured Pydantic evaluation scorecards (fit score, recommendation, strengths, gaps, skills matrix, interview questions), and interactive Recruiter Pipeline Dashboard.
 - **Phase 5: RAG Pipeline & MCP Tooling Foundations**: Introduces document chunking and vector embedding with `pgvector` for scalable knowledge retrieval, enabling context-aware evaluations, plus foundational MCP server implementations for managed tooling.
 - **Phase 6: AI-Powered Interview System**: Implements an interactive multi-agent evaluation pipeline with automated role-specific question generation, structured multi-axis answers evaluation (Technical, Problem Solving, Communication, Role Fit), and a unified final scorecard. Features dedicated candidate and recruiter interface portals.
+- **Phase 7: Multi-Agent Orchestration & A2A**: Orchestrates the Phase 6 agents via an independent `orchestration_service.py` that handles state machine, execution persistence, parallel execution of evaluators, failure recovery, and A2A contracts, accessible via dedicated Swagger endpoints.
 
 ---
 

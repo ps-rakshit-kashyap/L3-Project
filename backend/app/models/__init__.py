@@ -7,6 +7,7 @@ from app.models.rag import DocumentChunk, KnowledgeDocument
 from app.models.resume import Resume
 from app.models.user import User, UserRole
 from app.models.interview import InterviewSession, InterviewQuestion, InterviewAnswer, InterviewEvaluation
+from app.models.orchestration import OrchestrationRun, AgentExecution
 
 __all__ = [
     "Application",
@@ -25,4 +26,6 @@ __all__ = [
     "InterviewQuestion",
     "InterviewAnswer",
     "InterviewEvaluation",
+    "OrchestrationRun",
+    "AgentExecution",
 ]
