@@ -12,6 +12,7 @@ import { CandidatePortalTab } from '@/components/CandidatePortalTab';
 import { AdminUsersTab } from '@/components/AdminUsersTab';
 import { ScreeningDashboardTab } from '@/components/ScreeningDashboardTab';
 import { KnowledgeTab } from '@/components/KnowledgeTab';
+import { InterviewsTab } from '@/components/InterviewsTab';
 import { useAuth } from '@/context/AuthContext';
 import {
   Activity,
@@ -36,6 +37,7 @@ type TabType =
   | 'candidates'
   | 'applications'
   | 'screening'
+  | 'interviews'
   | 'knowledge'
   | 'admin-users';
 
@@ -215,6 +217,17 @@ export default function HomePage() {
             </button>
           )}
 
+          {canAccessRecruiter && (
+            <button
+              id="tab-interviews"
+              className={`nav-tab-item ${activeTab === 'interviews' ? 'active' : ''}`}
+              onClick={() => setActiveTab('interviews')}
+            >
+              <Users size={16} />
+              <span>Interviews</span>
+            </button>
+          )}
+
           {/* Health & Telemetry is always available */}
           <button
             id="tab-telemetry"
@@ -293,6 +306,19 @@ export default function HomePage() {
               <h3 style={{ margin: '0 0 0.5rem 0' }}>Access Restricted</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto' }}>
                 The Knowledge Base is restricted to Recruiter and Admin roles.
+              </p>
+            </div>
+          )
+        )}
+        {activeTab === 'interviews' && (
+          canAccessRecruiter ? (
+            <InterviewsTab />
+          ) : (
+            <div className="card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
+              <Lock size={32} color="#f87171" style={{ margin: '0 auto 1rem auto' }} />
+              <h3 style={{ margin: '0 0 0.5rem 0' }}>Access Restricted</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto' }}>
+                Interviews are restricted to Recruiter and Admin roles.
               </p>
             </div>
           )

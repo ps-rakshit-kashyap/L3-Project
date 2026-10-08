@@ -6,6 +6,7 @@ from app.models.job import Job
 from app.models.rag import DocumentChunk, KnowledgeDocument
 from app.models.resume import Resume
 from app.models.user import User, UserRole
+from app.models.interview import InterviewSession, InterviewQuestion, InterviewAnswer, InterviewEvaluation
 
 __all__ = [
     "Application",
@@ -20,4 +21,8 @@ __all__ = [
     "ScreeningResult",
     "User",
     "UserRole",
+    "InterviewSession",
+    "InterviewQuestion",
+    "InterviewAnswer",
+    "InterviewEvaluation",
 ]
