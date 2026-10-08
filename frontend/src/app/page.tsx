@@ -11,6 +11,7 @@ import { ApplicationsTab } from '@/components/ApplicationsTab';
 import { CandidatePortalTab } from '@/components/CandidatePortalTab';
 import { AdminUsersTab } from '@/components/AdminUsersTab';
 import { ScreeningDashboardTab } from '@/components/ScreeningDashboardTab';
+import { KnowledgeTab } from '@/components/KnowledgeTab';
 import { useAuth } from '@/context/AuthContext';
 import {
   Activity,
@@ -24,6 +25,7 @@ import {
   LogIn,
   Lock,
   Sparkles,
+  BookOpen,
 } from 'lucide-react';
 
 type TabType =
@@ -34,6 +36,7 @@ type TabType =
   | 'candidates'
   | 'applications'
   | 'screening'
+  | 'knowledge'
   | 'admin-users';
 
 export default function HomePage() {
@@ -201,6 +204,17 @@ export default function HomePage() {
             </button>
           )}
 
+          {canAccessRecruiter && (
+            <button
+              id="tab-knowledge"
+              className={`nav-tab-item ${activeTab === 'knowledge' ? 'active' : ''}`}
+              onClick={() => setActiveTab('knowledge')}
+            >
+              <BookOpen size={16} />
+              <span>Knowledge Base</span>
+            </button>
+          )}
+
           {/* Health & Telemetry is always available */}
           <button
             id="tab-telemetry"
@@ -266,6 +280,19 @@ export default function HomePage() {
               <h3 style={{ margin: '0 0 0.5rem 0' }}>Access Restricted</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto' }}>
                 The AI Screening Dashboard is restricted to Recruiter and Admin roles.
+              </p>
+            </div>
+          )
+        )}
+        {activeTab === 'knowledge' && (
+          canAccessRecruiter ? (
+            <KnowledgeTab />
+          ) : (
+            <div className="card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
+              <Lock size={32} color="#f87171" style={{ margin: '0 auto 1rem auto' }} />
+              <h3 style={{ margin: '0 0 0.5rem 0' }}>Access Restricted</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 auto' }}>
+                The Knowledge Base is restricted to Recruiter and Admin roles.
               </p>
             </div>
           )

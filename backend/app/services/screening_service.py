@@ -18,6 +18,7 @@ from app.schemas.screening import (
     SkillMatch,
 )
 from app.services.resume_extractor import resume_extractor
+from app.services.rag_service import rag_service
 
 
 class ScreeningAgentService:
@@ -33,6 +34,7 @@ class ScreeningAgentService:
         resume_text: str,
         candidate_name: str | None = None,
         custom_notes: str | None = None,
+        rag_context: str | None = None,
     ) -> ScreeningEvaluation:
         """
         Runs the screening evaluation against a job and resume text.
@@ -42,7 +44,7 @@ class ScreeningAgentService:
 
         if api_key and settings.LLM_PROVIDER != "mock":
             try:
-                return self._call_llm(job, resume_text, candidate_name, custom_notes)
+                return self._call_llm(job, resume_text, candidate_name, custom_notes, rag_context)
             except Exception as exc:
                 logger.warning(
                     f"LLM screening call failed ({settings.LLM_PROVIDER}): {exc}. "
@@ -57,6 +59,7 @@ class ScreeningAgentService:
         resume_text: str,
         candidate_name: str | None = None,
         custom_notes: str | None = None,
+        rag_context: str | None = None,
     ) -> tuple[str, str]:
         """Constructs system and user prompts for the screening agent."""
         system_prompt = (
@@ -98,15 +101,18 @@ class ScreeningAgentService:
         if custom_notes:
             job_info.append(f"Recruiter Notes: {custom_notes}")
 
+        if rag_context:
+            job_info.append(f"Company Hiring Rules & Knowledge Context:\n{rag_context}")
+
         # Truncate resume text safely if excessively long (e.g., > 16,000 characters)
         safe_resume_text = resume_text[:16000]
 
         user_prompt = (
-            f"=== TARGET JOB ===\n"
+            f"=== TARGET JOB & KNOWLEDGE ===\n"
             f"{chr(10).join(job_info)}\n\n"
             f"=== CANDIDATE RESUME ({candidate_name or 'Applicant'}) ===\n"
             f"{safe_resume_text}\n\n"
-            f"Evaluate the candidate strictly against the job requirements and return the structured JSON result."
+            f"Evaluate the candidate strictly against the job requirements and knowledge context, returning the structured JSON result."
         )
 
         return system_prompt, user_prompt
@@ -117,10 +123,11 @@ class ScreeningAgentService:
         resume_text: str,
         candidate_name: str | None = None,
         custom_notes: str | None = None,
+        rag_context: str | None = None,
     ) -> ScreeningEvaluation:
         """Makes an OpenAI-compatible API call to Groq / OpenAI."""
         system_prompt, user_prompt = self._build_prompt(
-            job, resume_text, candidate_name, custom_notes
+            job, resume_text, candidate_name, custom_notes, rag_context
         )
 
         api_key = settings.effective_llm_api_key
@@ -347,12 +354,17 @@ class ScreeningAgentService:
         # Extract text (or get cached)
         resume_text = resume_extractor.get_or_extract_text(db, latest_resume)
 
+        # Gather RAG Context
+        rag_chunks = rag_service.search(db, query=f"{application.job.title} {application.job.description}", top_k=3)
+        rag_context = "\n".join(c.content for c in rag_chunks) if rag_chunks else None
+
         # Evaluate candidate against job
         evaluation = self.evaluate(
             job=application.job,
             resume_text=resume_text,
             candidate_name=candidate.name,
             custom_notes=custom_notes,
+            rag_context=rag_context,
         )
 
         # Update or create ScreeningResult entity
